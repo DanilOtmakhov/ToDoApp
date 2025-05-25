@@ -35,14 +35,25 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
     
     // MARK: - Private Properties
     
-    var presenter: TaskListPresenterProtocol?
+    var presenter: TaskListPresenterProtocol
+    
+    // MARK: - Initialization
+    
+    init(presenter: TaskListPresenterProtocol) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewController()
-        presenter?.viewDidLoad()
+        presenter.viewDidLoad()
     }
 
 }
@@ -86,7 +97,7 @@ private extension TaskListViewController {
 extension TaskListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter?.numberOfTasks ?? 0
+        presenter.numberOfTasks
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -94,13 +105,12 @@ extension TaskListViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: TaskCell.reuseIdentifier,
                 for: indexPath
-            ) as? TaskCell,
-            let task = presenter?.task(at: indexPath.row)
+            ) as? TaskCell
         else {
             return UITableViewCell()
         }
         
-        cell.configure(with: task)
+        cell.configure(with: presenter.task(at: indexPath.row))
         return cell
     }
     

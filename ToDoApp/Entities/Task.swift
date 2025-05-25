@@ -8,13 +8,18 @@
 import Foundation
 
 struct Task {
+    let id: UUID
     let title: String
     let description: String
     let createdAt: Date
     let isCompleted: Bool
     
-    static let mockData: [Task] = [
-        Task(title: "Buy milk", description: "Get 2 liters", createdAt: Date(), isCompleted: false),
-        Task(title: "Do homework", description: "Finish math exercises", createdAt: Date(), isCompleted: true)
-    ]
+    init(from remote: RemoteTask) {
+        self.id = UUID(uuidString: "\(remote.id)") ?? UUID()
+        self.title = remote.todo
+        self.description = remote.todo
+        self.createdAt = Date()
+        self.isCompleted = remote.completed
+    }
+    
 }

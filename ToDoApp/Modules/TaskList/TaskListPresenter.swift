@@ -16,8 +16,12 @@ protocol TaskListPresenterProtocol: AnyObject {
 final class TaskListPresenter: TaskListPresenterProtocol {
     
     weak var view: TaskListViewProtocol?
+    private let interactor: TaskListInteractorProtocol
+    private var tasks: [Task] = []
     
-    let tasks = Task.mockData
+    init(interactor: TaskListInteractorProtocol) {
+        self.interactor = interactor
+    }
     
     var numberOfTasks: Int { tasks.count }
     
@@ -27,7 +31,22 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
     
     func viewDidLoad() {
+        interactor.loadTasks()
+    }
+    
+}
+
+// MARK: -
+
+extension TaskListPresenter: TaskListInteractorOutput {
+    
+    func didLoadTasks(_ tasks: [Task]) {
+        self.tasks = tasks
         view?.reloadData()
+    }
+    
+    func didFailToLoadTasks(_ error: any Error) {
+        // TODO: show error
     }
     
 }

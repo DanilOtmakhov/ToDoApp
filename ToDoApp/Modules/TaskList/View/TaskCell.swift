@@ -16,7 +16,7 @@ struct TaskCellViewModel {
     init(_ task: Task) {
         self.title = task.title
         self.description = task.description
-        self.formattedDate = task.createdAt.description
+        self.formattedDate = task.createdAt.dateString
         self.isCompleted = task.isCompleted
     }
 }

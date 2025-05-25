@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+extension Date {
+    var dateString: String { DateFormatter.defaultDateFormatter.string(from: self) }
+}
+
+extension DateFormatter {
+    static let defaultDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/mm/yy"
+        return dateFormatter
+    }()
+}
