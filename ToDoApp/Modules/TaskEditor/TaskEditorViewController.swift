@@ -124,11 +124,12 @@ private extension TaskEditorViewController {
     }
     
     func setupNavigationBar() {
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
         doneButton = UIBarButtonItem(title: "Готово",
                                       style: .done,
                                       target: self,
                                       action: #selector(didTapDoneButton))
-        doneButton?.tintColor = .accentPrimary
         doneButton?.isEnabled = true
         doneButton?.isAccessibilityElement = true
     }

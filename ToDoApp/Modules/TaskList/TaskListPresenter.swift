@@ -11,12 +11,15 @@ protocol TaskListPresenterProtocol: AnyObject {
     var numberOfTasks: Int { get }
     func task(at index: Int) -> TaskCellViewModel?
     func viewDidLoad()
+    func didTapAddTask()
+    func didTapEditTask(at index: Int)
 }
 
 final class TaskListPresenter: TaskListPresenterProtocol {
     
     weak var view: TaskListViewProtocol?
     private let interactor: TaskListInteractorProtocol
+    var router: TaskListRouterProtocol?
     
     init(interactor: TaskListInteractorProtocol) {
         self.interactor = interactor
@@ -31,6 +34,15 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     
     func viewDidLoad() {
         interactor.loadTasks()
+    }
+    
+    func didTapAddTask() {
+        router?.showTaskEditor(task: nil)
+    }
+
+    func didTapEditTask(at index: Int) {
+        guard let task = interactor.task(at: index) else { return }
+        router?.showTaskEditor(task: task)
     }
     
 }

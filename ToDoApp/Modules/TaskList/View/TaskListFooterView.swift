@@ -22,10 +22,13 @@ final class TaskListFooterView: UIView {
         let button = UIButton()
         button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
         button.tintColor = .accentPrimary
+        button.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
         return button
     }()
     
     // MARK: - Internal Properties
+    
+    var onAddButtonTapped: (() -> Void)?
     
     var count: Int = 0 {
         didSet { taskCountLabel.text = "\(count) Задач" }
@@ -65,6 +68,17 @@ private extension TaskListFooterView {
             addButton.widthAnchor.constraint(equalToConstant: 24),
             addButton.heightAnchor.constraint(equalToConstant: 24)
         ])
+    }
+    
+}
+
+// MARK: - Actions
+
+@objc
+private extension TaskListFooterView {
+    
+    func didTapAddButton() {
+        onAddButtonTapped?()
     }
     
 }

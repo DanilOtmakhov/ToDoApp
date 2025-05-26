@@ -54,7 +54,13 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewController()
+        setupNavigationBar()
         presenter.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
 
 }
@@ -90,11 +96,10 @@ private extension TaskListViewController {
     
     func setupViewController() {
         view.backgroundColor = .background
-        title = "Задачи"
         
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+        footerView.onAddButtonTapped = { [weak self] in
+            self?.presenter.didTapAddTask()
+        }
         
         [tableView, footerView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -112,6 +117,20 @@ private extension TaskListViewController {
             footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             footerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1/10)
         ])
+    }
+    
+    func setupNavigationBar() {
+        title = "Задачи"
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        
+        navigationController?.navigationBar.tintColor = .accentPrimary
+        
+        let backItem = UIBarButtonItem()
+        backItem.title = "Назад"
+        navigationItem.backBarButtonItem = backItem
     }
     
 }

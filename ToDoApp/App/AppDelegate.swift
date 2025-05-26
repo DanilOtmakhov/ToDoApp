@@ -16,18 +16,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         configureNavigationBarAppearance()
         
-        let networkService = TaskNetworkService()
-        let store = TaskStore()
-        let provider = TaskProvider(store: store)
-        let interactor = TaskListInteractor(taskService: networkService, taskProvider: provider)
-        let presenter = TaskListPresenter(interactor: interactor)
-        let viewController = TaskListViewController(presenter: presenter)
-        
-        interactor.output = presenter
-        presenter.view = viewController
-        
-        viewController.presenter = presenter
-        presenter.view = viewController
+        let viewController = makeTaskListModule()
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = UINavigationController(rootViewController: viewController)
@@ -53,6 +42,24 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         navigationBarAppearance.standardAppearance = appearance
         navigationBarAppearance.scrollEdgeAppearance = appearance
         navigationBarAppearance.compactAppearance = appearance
+    }
+    
+    private func makeTaskListModule() -> UIViewController {
+        let networkService = TaskNetworkService()
+        let store = TaskStore()
+        let provider = TaskProvider(store: store)
+        let interactor = TaskListInteractor(taskService: networkService, taskProvider: provider)
+
+        let presenter = TaskListPresenter(interactor: interactor)
+
+        let viewController = TaskListViewController(presenter: presenter)
+        let router = TaskListRouter(viewController: viewController)
+
+        interactor.output = presenter
+        presenter.view = viewController
+        presenter.router = router
+
+        return viewController
     }
 
 }
