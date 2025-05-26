@@ -134,6 +134,11 @@ private extension TaskEditorViewController {
         doneButton?.isAccessibilityElement = true
     }
     
+    func updateDoneButtonVisibility() {
+        let isTitleEmpty = titleTextField.text?.isEmpty ?? true
+        navigationItem.rightBarButtonItem = isTitleEmpty ? nil : doneButton
+    }
+    
 }
 
 // MARK: - Actions
@@ -153,7 +158,11 @@ private extension TaskEditorViewController {
 extension TaskEditorViewController: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        navigationItem.rightBarButtonItem = doneButton
+        updateDoneButtonVisibility()
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateDoneButtonVisibility()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -168,7 +177,7 @@ extension TaskEditorViewController: UITextFieldDelegate {
 extension TaskEditorViewController: UITextViewDelegate {
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        navigationItem.rightBarButtonItem = doneButton
+        updateDoneButtonVisibility()
     }
     
 }

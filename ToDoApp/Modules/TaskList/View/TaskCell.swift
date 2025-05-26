@@ -9,7 +9,7 @@ import UIKit
 
 struct TaskCellViewModel {
     let title: String
-    let description: String
+    let description: String?
     let formattedDate: String
     let isCompleted: Bool
     
