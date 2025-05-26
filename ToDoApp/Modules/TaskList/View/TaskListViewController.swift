@@ -155,6 +155,10 @@ extension TaskListViewController: UITableViewDataSource {
         }
         
         cell.configure(with: task)
+        cell.onCompleteButtonTapped = { [weak self] in
+            self?.presenter.didTapCompleteButton(at: indexPath.row)
+        }
+        
         return cell
     }
     

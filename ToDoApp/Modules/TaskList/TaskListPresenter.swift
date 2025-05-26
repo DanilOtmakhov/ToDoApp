@@ -11,6 +11,7 @@ protocol TaskListPresenterProtocol: AnyObject {
     var numberOfTasks: Int { get }
     func task(at index: Int) -> TaskCellViewModel?
     func viewDidLoad()
+    func didTapCompleteButton(at index: Int)
     func didTapAddTask()
     func didTapEditTask(at index: Int)
 }
@@ -34,6 +35,10 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     
     func viewDidLoad() {
         interactor.loadTasks()
+    }
+    
+    func didTapCompleteButton(at index: Int) {
+        interactor.toggleCompletionForTask(at: index)
     }
     
     func didTapAddTask() {

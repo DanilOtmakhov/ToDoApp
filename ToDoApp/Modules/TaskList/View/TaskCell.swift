@@ -25,9 +25,10 @@ final class TaskCell: UITableViewCell {
     
     // MARK: - Subviews
     
-    private lazy var statusIcon: UIImageView = {
-        let imageView = UIImageView()
-        return imageView
+    private lazy var completeButton: UIButton = {
+        let button = UIButton()
+        button.addTarget(self, action: #selector(didTapStatusButton), for: .touchUpInside)
+        return button
     }()
     
     private lazy var titleLabel: UILabel = {
@@ -59,7 +60,11 @@ final class TaskCell: UITableViewCell {
 
     static let reuseIdentifier = "TaskCell"
     
-    // MARK: - Init
+    // MARK: - Internal Properties
+    
+    var onCompleteButtonTapped: (() -> Void)?
+    
+    // MARK: - Initialization
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -88,15 +93,15 @@ extension TaskCell {
                              .foregroundColor: UIColor.textSecondary])
             titleLabel.attributedText = attributed
             descriptionLabel.textColor = .textSecondary
-            statusIcon.image = UIImage(systemName: "checkmark.circle")
-            statusIcon.tintColor = .accentPrimary
+            completeButton.setImage(UIImage(systemName: "checkmark.circle"), for: .normal)
+            completeButton.tintColor = .accentPrimary
         } else {
             titleLabel.attributedText = nil
             titleLabel.text = model.title
             titleLabel.textColor = .textPrimary
             descriptionLabel.textColor = .textPrimary
-            statusIcon.image = UIImage(systemName: "circle")
-            statusIcon.tintColor = .textSecondary
+            completeButton.setImage(UIImage(systemName: "circle"), for: .normal)
+            completeButton.tintColor = .textSecondary
         }
     }
     
@@ -107,18 +112,18 @@ extension TaskCell {
 private extension TaskCell {
     
     func setupCell() {
-        [statusIcon, titleLabel, descriptionLabel, dateLabel].forEach {
+        [completeButton, titleLabel, descriptionLabel, dateLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
         
         NSLayoutConstraint.activate([
-            statusIcon.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            statusIcon.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
-            statusIcon.widthAnchor.constraint(equalToConstant: 24),
-            statusIcon.heightAnchor.constraint(equalToConstant: 24),
+            completeButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            completeButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            completeButton.widthAnchor.constraint(equalToConstant: 24),
+            completeButton.heightAnchor.constraint(equalToConstant: 24),
             
-            titleLabel.leadingAnchor.constraint(equalTo: statusIcon.trailingAnchor, constant: 8),
+            titleLabel.leadingAnchor.constraint(equalTo: completeButton.trailingAnchor, constant: 8),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             
@@ -131,7 +136,17 @@ private extension TaskCell {
             dateLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 6),
             dateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
         ])
+    }
+    
+}
 
+// MARK: - Actions
+
+@objc
+private extension TaskCell {
+    
+    func didTapStatusButton() {
+        onCompleteButtonTapped?()
     }
     
 }

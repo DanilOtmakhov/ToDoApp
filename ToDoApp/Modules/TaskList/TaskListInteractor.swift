@@ -109,7 +109,7 @@ private extension TaskListInteractor {
                 
                 switch result {
                 case .success(let remoteTasks):
-                    let tasks = remoteTasks.map(Task.init)
+                    let tasks = remoteTasks.reversed().map(Task.init)
                     self.provider.save(tasks) { result in
                         switch result {
                         case .success:
