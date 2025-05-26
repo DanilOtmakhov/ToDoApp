@@ -107,11 +107,11 @@ extension TaskDataProvider: TaskListDataProviderProtocol {
 extension TaskDataProvider: TaskEditorDataProviderProtocol {
     
     func add(_ task: Task) throws {
-        
+        try store.add(task)
     }
     
     func edit(_ task: Task, with newTask: Task) throws {
-        
+        try store.edit(task, with: newTask)
     }
     
 }
