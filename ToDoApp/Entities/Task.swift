@@ -22,4 +22,12 @@ struct Task {
         self.isCompleted = remote.completed
     }
     
+    init(from entity: TaskEntity) {
+        self.id = entity.id ?? UUID()
+        self.title = entity.title ?? ""
+        self.description = entity.descriptionText ?? ""
+        self.createdAt = entity.createdAt ?? Date()
+        self.isCompleted = entity.isCompleted
+    }
+    
 }

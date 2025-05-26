@@ -16,8 +16,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         configureNavigationBarAppearance()
         
-        let taskService = TaskService()
-        let interactor = TaskListInteractor(taskService: taskService)
+        let networkService = TaskNetworkService()
+        let store = TaskStore()
+        let provider = TaskProvider(store: store)
+        let interactor = TaskListInteractor(taskService: networkService, taskProvider: provider)
         let presenter = TaskListPresenter(interactor: interactor)
         let viewController = TaskListViewController(presenter: presenter)
         

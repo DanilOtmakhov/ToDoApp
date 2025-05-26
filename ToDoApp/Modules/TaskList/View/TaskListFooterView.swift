@@ -13,7 +13,6 @@ final class TaskListFooterView: UIView {
     
     private lazy var taskCountLabel: UILabel = {
         let label = UILabel()
-        label.text = "7 Задач"
         label.textColor = .textPrimary
         label.font = .systemFont(ofSize: 11)
         return label

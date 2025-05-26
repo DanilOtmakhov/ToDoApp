@@ -1,5 +1,5 @@
 //
-//  TaskService.swift
+//  TaskNetworkService.swift
 //  ToDoApp
 //
 //  Created by Danil Otmakhov on 25.05.2025.
@@ -18,18 +18,20 @@ struct RemoteTaskResponse: Decodable {
     let todos: [RemoteTask]
 }
 
-protocol TaskServiceProtocol {
+protocol TaskNetworkServiceProtocol {
     func fetchTasks(completion: @escaping (Result<[RemoteTask], Error>) -> Void)
 }
 
-final class TaskService: TaskServiceProtocol {
+final class TaskNetworkService: TaskNetworkServiceProtocol {
+    
+    private let urlString = "https://dummyjson.com/todos"
 
     func fetchTasks(completion: @escaping (Result<[RemoteTask], Error>) -> Void) {
-        guard let url = URL(string: "https://dummyjson.com/todos") else {
+        guard let url = URL(string: urlString) else {
             completion(.failure(URLError(.badURL)))
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 completion(.failure(error))

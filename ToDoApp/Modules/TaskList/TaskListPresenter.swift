@@ -9,7 +9,7 @@ import Foundation
 
 protocol TaskListPresenterProtocol: AnyObject {
     var numberOfTasks: Int { get }
-    func task(at index: Int) -> TaskCellViewModel
+    func task(at index: Int) -> TaskCellViewModel?
     func viewDidLoad()
 }
 
@@ -17,16 +17,15 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     
     weak var view: TaskListViewProtocol?
     private let interactor: TaskListInteractorProtocol
-    private var tasks: [Task] = []
     
     init(interactor: TaskListInteractorProtocol) {
         self.interactor = interactor
     }
     
-    var numberOfTasks: Int { tasks.count }
+    var numberOfTasks: Int { interactor.numberOfTasks }
     
-    func task(at index: Int) -> TaskCellViewModel {
-        let task = tasks[index]
+    func task(at index: Int) -> TaskCellViewModel? {
+        guard let task = interactor.task(at: index) else { return nil }
         return TaskCellViewModel(task)
     }
     
@@ -36,13 +35,12 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     
 }
 
-// MARK: -
+// MARK: - TaskListInteractorOutput
 
 extension TaskListPresenter: TaskListInteractorOutput {
     
-    func didLoadTasks(_ tasks: [Task]) {
-        self.tasks = tasks
-        view?.reloadData()
+    func didReceiveUpdate(_ update: TaskStoreUpdate) {
+        view?.applyUpdate(update)
     }
     
     func didFailToLoadTasks(_ error: any Error) {

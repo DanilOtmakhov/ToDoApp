@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskListViewProtocol: AnyObject {
-    func reloadData()
+    func applyUpdate(_ update: TaskStoreUpdate)
 }
 
 final class TaskListViewController: UIViewController, TaskListViewProtocol {
@@ -63,9 +63,23 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
 
 extension TaskListViewController {
     
-    func reloadData() {
-        tableView.reloadData()
+    func applyUpdate(_ update: TaskStoreUpdate) {
         footerView.count = presenter.numberOfTasks
+        
+        tableView.performBatchUpdates {
+            for change in update.changes {
+                switch change {
+                case .insert(let indexPath):
+                    tableView.insertRows(at: [indexPath], with: .automatic)
+                case .delete(let indexPath):
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                case .move(let from, let to):
+                    tableView.moveRow(at: from, to: to)
+                case .update(let indexPath):
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                }
+            }
+        }
     }
     
 }
@@ -115,12 +129,13 @@ extension TaskListViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: TaskCell.reuseIdentifier,
                 for: indexPath
-            ) as? TaskCell
+            ) as? TaskCell,
+            let task = presenter.task(at: indexPath.row)
         else {
             return UITableViewCell()
         }
         
-        cell.configure(with: presenter.task(at: indexPath.row))
+        cell.configure(with: task)
         return cell
     }
     
