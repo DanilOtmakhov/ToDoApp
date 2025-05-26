@@ -26,6 +26,12 @@ final class TaskListFooterView: UIView {
         return button
     }()
     
+    // MARK: - Internal Properties
+    
+    var count: Int = 0 {
+        didSet { taskCountLabel.text = "\(count) Задач" }
+    }
+    
     // MARK: - Initialization
     
     override init(frame: CGRect) {

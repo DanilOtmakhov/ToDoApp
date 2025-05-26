@@ -65,6 +65,7 @@ extension TaskListViewController {
     
     func reloadData() {
         tableView.reloadData()
+        footerView.count = presenter.numberOfTasks
     }
     
 }
