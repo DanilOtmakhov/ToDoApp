@@ -8,6 +8,7 @@
 import Foundation
 
 protocol TaskEditorPresenterProtocol: AnyObject {
+    var view: TaskEditorViewProtocol? { get set }
     func viewDidLoad()
     func didTapDone(title: String?, description: String?)
 }
@@ -16,10 +17,14 @@ final class TaskEditorPresenter: TaskEditorPresenterProtocol {
     
     weak var view: TaskEditorViewProtocol?
     
+    private var interactor: TaskEditorInteractorInput
     private var task: Task?
     
-    init(task: Task? = nil) {
+    init(interactor: TaskEditorInteractorInput, task: Task? = nil) {
+        self.interactor = interactor
         self.task = task
+        
+        self.interactor.output = self
     }
     
     func viewDidLoad() {
@@ -31,8 +36,27 @@ final class TaskEditorPresenter: TaskEditorPresenterProtocol {
     }
     
     func didTapDone(title: String?, description: String?) {
-        print(title)
-        print(description)
+        if let existingTask = task {
+            interactor.edit(existingTask, newTitle: title, newDescription: description)
+        } else {
+            interactor.addTask(title: title, description: description)
+        }
     }
     
 }
+
+// MARK: - TaskEditorInteractorOutput
+
+extension TaskEditorPresenter: TaskEditorInteractorOutput {
+    
+    func didSaveTaskSuccessfully() {
+        
+    }
+    
+    func didFailToSaveTask(with error: any Error) {
+        // TODO: show error
+    }
+    
+}
+
+

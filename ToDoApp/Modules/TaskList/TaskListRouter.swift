@@ -20,9 +20,11 @@ final class TaskListRouter: TaskListRouterProtocol {
     }
 
     func showTaskEditor(task: Task?) {
-        let presenter = TaskEditorPresenter(task: task)
+        let store = TaskStore()
+        let provider = TaskDataProvider(store: store)
+        let interactor = TaskEditorInteractor(provider: provider)
+        let presenter = TaskEditorPresenter(interactor: interactor, task: task)
         let viewController = TaskEditorViewController(presenter: presenter)
-        presenter.view = viewController
 
         self.viewController?.navigationController?.pushViewController(viewController, animated: true)
     }

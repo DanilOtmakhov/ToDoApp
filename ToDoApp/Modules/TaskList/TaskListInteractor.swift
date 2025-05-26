@@ -27,14 +27,14 @@ final class TaskListInteractor: TaskListInteractorProtocol {
     weak var output: TaskListInteractorOutput?
     
     private let networkService: TaskNetworkServiceProtocol
-    private var provider: TaskProviderProtocol
+    private var provider: TaskListDataProviderProtocol
     private let userDefaults: UserDefaults
 
-    init(taskService: TaskNetworkServiceProtocol,
-        taskProvider: TaskProviderProtocol,
+    init(networkService: TaskNetworkServiceProtocol,
+        provider: TaskListDataProviderProtocol,
         userDefaults: UserDefaults = .standard) {
-        self.networkService = taskService
-        self.provider = taskProvider
+        self.networkService = networkService
+        self.provider = provider
         self.userDefaults = userDefaults
         
         self.provider.delegate = self
@@ -76,7 +76,7 @@ final class TaskListInteractor: TaskListInteractorProtocol {
 
 // MARK: - TaskProviderDelegate
 
-extension TaskListInteractor: TaskProviderDelegate {
+extension TaskListInteractor: TaskListDataProviderDelegate {
     
     func didUpdate(_ update: TaskStoreUpdate) {
         output?.didReceiveUpdate(update)

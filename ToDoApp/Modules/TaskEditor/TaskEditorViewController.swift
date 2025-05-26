@@ -55,13 +55,14 @@ final class TaskEditorViewController: UIViewController, TaskEditorViewProtocol {
     
     // MARK: - Private Properties
     
-    private let presenter: TaskEditorPresenterProtocol
+    private var presenter: TaskEditorPresenterProtocol
     
     // MARK: - Initialization
     
     init(presenter: TaskEditorPresenterProtocol) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
+        self.presenter.view = self
     }
     
     required init?(coder: NSCoder) {

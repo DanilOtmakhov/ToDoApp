@@ -1,5 +1,5 @@
 //
-//  TaskProvider.swift
+//  TaskDataProvider.swift
 //  ToDoApp
 //
 //  Created by Danil Otmakhov on 26.05.2025.
@@ -18,24 +18,29 @@ struct TaskStoreUpdate {
     let changes: [ChangeType]
 }
 
-protocol TaskProviderProtocol {
-    var delegate: TaskProviderDelegate? { get set }
+protocol TaskListDataProviderProtocol {
+    var delegate: TaskListDataProviderDelegate? { get set }
     var numberOfRows: Int { get }
     func task(at indexPath: IndexPath) -> Task?
     func fetchTasks()
     func save(_ tasks: [Task]) throws
 }
 
-protocol TaskProviderDelegate: AnyObject {
+protocol TaskEditorDataProviderProtocol {
+    func add(_ task: Task) throws
+    func edit(_ task: Task, with newTask: Task) throws
+}
+
+protocol TaskListDataProviderDelegate: AnyObject {
     func didUpdate(_ update: TaskStoreUpdate)
     func didFail(with error: Error)
 }
 
-final class TaskProvider: NSObject, TaskProviderProtocol {
+final class TaskDataProvider: NSObject {
     
     // MARK: - Internal Properties
     
-    weak var delegate: TaskProviderDelegate?
+    weak var delegate: TaskListDataProviderDelegate?
     
     // MARK: - Private Properties
     
@@ -68,9 +73,9 @@ final class TaskProvider: NSObject, TaskProviderProtocol {
     
 }
 
-// MARK: - TaskProviderProtocol
+// MARK: - TaskListDataProviderProtocol
 
-extension TaskProvider {
+extension TaskDataProvider: TaskListDataProviderProtocol {
     
     var numberOfRows: Int {
         fetchedResultsController.fetchedObjects?.count ?? 0
@@ -97,9 +102,24 @@ extension TaskProvider {
     
 }
 
+// MARK: - TaskEditorDataProviderProtocol
+
+extension TaskDataProvider: TaskEditorDataProviderProtocol {
+    
+    func add(_ task: Task) throws {
+        
+    }
+    
+    func edit(_ task: Task, with newTask: Task) throws {
+        
+    }
+    
+}
+
+
 // MARK: - NSFetchedResultsControllerDelegate
 
-extension TaskProvider: NSFetchedResultsControllerDelegate {
+extension TaskDataProvider: NSFetchedResultsControllerDelegate {
     
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         changes.removeAll()

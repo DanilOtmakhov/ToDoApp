@@ -47,8 +47,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private func makeTaskListModule() -> UIViewController {
         let networkService = TaskNetworkService()
         let store = TaskStore()
-        let provider = TaskProvider(store: store)
-        let interactor = TaskListInteractor(taskService: networkService, taskProvider: provider)
+        let provider = TaskDataProvider(store: store)
+        let interactor = TaskListInteractor(networkService: networkService, provider: provider)
 
         let presenter = TaskListPresenter(interactor: interactor)
 
