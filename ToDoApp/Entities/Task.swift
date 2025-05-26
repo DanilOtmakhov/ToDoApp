@@ -8,11 +8,20 @@
 import Foundation
 
 struct Task {
+    
     let id: UUID
     let title: String
     let description: String
     let createdAt: Date
     let isCompleted: Bool
+    
+    init(id: UUID, title: String, description: String, createdAt: Date, isCompleted: Bool) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.createdAt = createdAt
+        self.isCompleted = isCompleted
+    }
     
     init(from remote: RemoteTask) {
         self.id = UUID(uuidString: "\(remote.id)") ?? UUID()

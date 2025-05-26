@@ -34,7 +34,7 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
     
     private lazy var footerView: TaskListFooterView = TaskListFooterView()
     
-    // MARK: - Private Properties
+    // MARK: - Internal Properties
     
     var presenter: TaskListPresenterProtocol
     
