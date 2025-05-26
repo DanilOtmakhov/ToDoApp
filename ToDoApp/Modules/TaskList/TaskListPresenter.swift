@@ -55,7 +55,7 @@ extension TaskListPresenter: TaskListInteractorOutput {
         view?.applyUpdate(update)
     }
     
-    func didFailToLoadTasks(_ error: any Error) {
+    func didFail(_ error: any Error) {
         // TODO: show error
     }
     

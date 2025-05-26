@@ -20,24 +20,31 @@ protocol TaskEditorInteractorOutput: AnyObject {
 
 final class TaskEditorInteractor: TaskEditorInteractorInput {
     
+    // MARK: - Internal Properties
+    
     weak var output: TaskEditorInteractorOutput?
     
+    // MARK: - Private Properties
+    
     private let provider: TaskEditorDataProviderProtocol
+    
+    // MARK: - Initialization
     
     init(provider: TaskEditorDataProviderProtocol) {
         self.provider = provider
     }
     
+}
+
+// MARK: - Internal Methods
+
+extension TaskEditorInteractor {
+    
     func addTask(title: String?, description: String?) {
         guard let title,
               !title.isEmpty
         else {
-            let error = NSError(
-                domain: "TaskEditor",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Название задачи не может быть пустым"]
-            )
-            output?.didFailToSaveTask(with: error)
+            self.sendError(message: "Название задачи не может быть пустым")
             return
         }
         
@@ -49,10 +56,9 @@ final class TaskEditorInteractor: TaskEditorInteractorInput {
             isCompleted: false
         )
         
-        do {
-            try provider.add(task)
-        } catch {
-            output?.didFailToSaveTask(with: error)
+        
+        provider.add(task) { [weak self] result in
+            self?.handleResult(result)
         }
     }
     
@@ -61,13 +67,7 @@ final class TaskEditorInteractor: TaskEditorInteractorInput {
             let newTitle,
             !newTitle.isEmpty
         else {
-            let error = NSError(
-                domain: "TaskEditor",
-                code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Название задачи не может быть пустым"]
-            )
-            output?.didFailToSaveTask(with: error)
-            output?.didSaveTaskSuccessfully()
+            self.sendError(message: "Название задачи не может быть пустым")
             return
         }
         
@@ -79,12 +79,34 @@ final class TaskEditorInteractor: TaskEditorInteractorInput {
             isCompleted: task.isCompleted
         )
         
-        do {
-            try provider.edit(task, with: newTask)
-            output?.didSaveTaskSuccessfully()
-        } catch {
-            output?.didFailToSaveTask(with: error)
+        provider.edit(task, with: newTask) { [weak self] result in
+            self?.handleResult(result)
         }
+    }
+    
+}
+
+// MARK: - Private Methods
+
+private extension TaskEditorInteractor {
+    
+    private func handleResult(_ result: Result<Void, Error>) {
+        switch result {
+        case .success:
+            self.output?.didSaveTaskSuccessfully()
+        case .failure(let error):
+            self.output?.didFailToSaveTask(with: error)
+        }
+    }
+    
+    private func sendError(message: String) {
+        let error = NSError(
+            domain: "TaskEditor",
+            code: -1,
+            userInfo: [NSLocalizedDescriptionKey: message]
+        )
+            
+        self.output?.didFailToSaveTask(with: error)
     }
     
 }

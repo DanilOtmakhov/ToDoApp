@@ -23,12 +23,14 @@ protocol TaskListDataProviderProtocol {
     var numberOfRows: Int { get }
     func task(at indexPath: IndexPath) -> Task?
     func fetchTasks()
-    func save(_ tasks: [Task]) throws
+    func save(_ tasks: [Task], completion: @escaping (Result<Void, Error>) -> Void)
+    func toggleCompletion(for task: Task, completion: @escaping (Result<Void, Error>) -> Void)
+    func delete(_ task: Task, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol TaskEditorDataProviderProtocol {
-    func add(_ task: Task) throws
-    func edit(_ task: Task, with newTask: Task) throws
+    func add(_ task: Task, completion: @escaping (Result<Void, Error>) -> Void)
+    func edit(_ task: Task, with newTask: Task, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol TaskListDataProviderDelegate: AnyObject {
@@ -82,22 +84,59 @@ extension TaskDataProvider: TaskListDataProviderProtocol {
     }
     
     func task(at indexPath: IndexPath) -> Task? {
-        let object = fetchedResultsController.object(at: indexPath)
-        return Task(from: object)
+        let entity = fetchedResultsController.object(at: indexPath)
+        return Task(from: entity)
     }
     
     func fetchTasks() {
         do {
             try fetchedResultsController.performFetch()
-            let update = TaskStoreUpdate(changes: [])
-            delegate?.didUpdate(update)
+            delegate?.didUpdate(TaskStoreUpdate(changes: []))
         } catch {
             delegate?.didFail(with: error)
         }
     }
     
-    func save(_ tasks: [Task]) throws {
-        try store.save(tasks)
+    func save(_ tasks: [Task], completion: @escaping (Result<Void, Error>) -> Void) {
+        store.save(tasks) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    self?.delegate?.didFail(with: error)
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func toggleCompletion(for task: Task, completion: @escaping (Result<Void, Error>) -> Void) {
+        store.toggleCompletion(for: task) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    self?.delegate?.didFail(with: error)
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    func delete(_ task: Task, completion: @escaping (Result<Void, Error>) -> Void) {
+        store.delete(task) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    self?.delegate?.didFail(with: error)
+                    completion(.failure(error))
+                }
+            }
+        }
     }
     
 }
@@ -106,16 +145,35 @@ extension TaskDataProvider: TaskListDataProviderProtocol {
 
 extension TaskDataProvider: TaskEditorDataProviderProtocol {
     
-    func add(_ task: Task) throws {
-        try store.add(task)
+    func add(_ task: Task, completion: @escaping (Result<Void, Error>) -> Void) {
+        store.add(task) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    self?.delegate?.didFail(with: error)
+                    completion(.failure(error))
+                }
+            }
+        }
     }
     
-    func edit(_ task: Task, with newTask: Task) throws {
-        try store.edit(task, with: newTask)
+    func edit(_ task: Task, with newTask: Task, completion: @escaping (Result<Void, Error>) -> Void) {
+        store.edit(task, with: newTask) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    self?.delegate?.didFail(with: error)
+                    completion(.failure(error))
+                }
+            }
+        }
     }
     
 }
-
 
 // MARK: - NSFetchedResultsControllerDelegate
 
