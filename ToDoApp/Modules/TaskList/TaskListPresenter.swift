@@ -14,6 +14,8 @@ protocol TaskListPresenterProtocol: AnyObject {
     func didTapCompleteButton(at index: Int)
     func didTapAddTask()
     func didTapEditTask(at index: Int)
+    func didTapDeleteTask(at index: Int)
+    func didTapShareTask(at index: Int)
 }
 
 final class TaskListPresenter: TaskListPresenterProtocol {
@@ -48,6 +50,14 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     func didTapEditTask(at index: Int) {
         guard let task = interactor.task(at: index) else { return }
         router?.showTaskEditor(task: task)
+    }
+    
+    func didTapDeleteTask(at index: Int) {
+        interactor.deleteTask(at: index)
+    }
+    
+    func didTapShareTask(at index: Int) {
+        
     }
     
 }

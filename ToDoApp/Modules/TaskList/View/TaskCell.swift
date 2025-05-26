@@ -7,6 +7,12 @@
 
 import UIKit
 
+enum TaskCellAction {
+    case edit
+    case share
+    case delete
+}
+
 struct TaskCellViewModel {
     let title: String
     let description: String?
@@ -63,6 +69,7 @@ final class TaskCell: UITableViewCell {
     // MARK: - Internal Properties
     
     var onCompleteButtonTapped: (() -> Void)?
+    var onActionSelected: ((TaskCellAction) -> Void)?
     
     // MARK: - Initialization
     
@@ -112,6 +119,9 @@ extension TaskCell {
 private extension TaskCell {
     
     func setupCell() {
+        let interaction = UIContextMenuInteraction(delegate: self)
+        contentView.addInteraction(interaction)
+        
         [completeButton, titleLabel, descriptionLabel, dateLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
@@ -149,4 +159,46 @@ private extension TaskCell {
         onCompleteButtonTapped?()
     }
     
+}
+
+// MARK: - UIContextMenuInteractionDelegate
+
+extension TaskCell: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(
+            actionProvider: { [weak self] _ in
+                
+                let editIcon = UIImage(systemName: "pencil")
+                let editAction = UIAction(
+                    title: "Редактировать",
+                    image: editIcon
+                ) { _ in
+                    self?.onActionSelected?(.edit)
+                }
+                
+                let shareIcon = UIImage(systemName: "square.and.arrow.up")
+                let shareAction = UIAction(
+                    title: "Поделиться",
+                    image: shareIcon
+                ) { _ in
+                    self?.onActionSelected?(.share)
+                }
+            
+                let deleteIcon = UIImage(systemName: "trash")
+                let deleteAction = UIAction(
+                    title: "Удалить",
+                    image: deleteIcon,
+                    attributes: .destructive
+                ) { _ in
+                    self?.onActionSelected?(.delete)
+                }
+            
+                return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
+            }
+        )
+    }
 }

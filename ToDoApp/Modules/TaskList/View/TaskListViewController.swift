@@ -158,6 +158,17 @@ extension TaskListViewController: UITableViewDataSource {
         cell.onCompleteButtonTapped = { [weak self] in
             self?.presenter.didTapCompleteButton(at: indexPath.row)
         }
+        cell.onActionSelected = { [weak self] action in
+            switch action {
+            case .edit:
+                self?.presenter.didTapEditTask(at: indexPath.row)
+            case .share:
+                self?.presenter.didTapShareTask(at: indexPath.row)
+            case .delete:
+                self?.presenter.didTapDeleteTask(at: indexPath.row)
+            }
+        }
+        
         
         return cell
     }
