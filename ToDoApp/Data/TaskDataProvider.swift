@@ -48,6 +48,7 @@ final class TaskDataProvider: NSObject {
     
     private let store: TaskStoreProtocol
     private let context: NSManagedObjectContext
+    private let operationQueue: DispatchQueue
     private var changes: [TaskStoreUpdate.ChangeType] = []
     
     private lazy var fetchedResultsController: NSFetchedResultsController<TaskEntity> = {
@@ -68,9 +69,14 @@ final class TaskDataProvider: NSObject {
     
     // MARK: - Initialization
     
-    init(store: TaskStoreProtocol, context: NSManagedObjectContext = CoreDataStack.shared.context) {
+    init(
+        store: TaskStoreProtocol,
+        context: NSManagedObjectContext = CoreDataStack.shared.viewContext,
+        operationQueue: DispatchQueue = DispatchQueue(label: "com.ToDoApp.TaskStore.queue", qos: .userInitiated)
+    ) {
         self.store = store
         self.context = context
+        self.operationQueue = operationQueue
     }
     
 }
@@ -89,20 +95,30 @@ extension TaskDataProvider: TaskListDataProviderProtocol {
     }
     
     func fetchTasks(with query: String = "") {
-        do {
-            if query.isEmpty {
-                fetchedResultsController.fetchRequest.predicate = nil
-            } else {
-                fetchedResultsController.fetchRequest.predicate = NSPredicate(
-                    format: "title CONTAINS[cd] %@ OR descriptionText CONTAINS[cd] %@",
-                    query, query
-                )
-            }
+        operationQueue.async { [weak self] in
+            guard let self = self else { return }
             
-            try fetchedResultsController.performFetch()
-            delegate?.didUpdate(TaskStoreUpdate(changes: []))
-        } catch {
-            delegate?.didFail(with: error)
+            self.context.performAndWait {
+                do {
+                    if query.isEmpty {
+                        self.fetchedResultsController.fetchRequest.predicate = nil
+                    } else {
+                        self.fetchedResultsController.fetchRequest.predicate = NSPredicate(
+                            format: "title CONTAINS[cd] %@ OR descriptionText CONTAINS[cd] %@",
+                            query, query
+                        )
+                    }
+                    
+                    try self.fetchedResultsController.performFetch()
+                    DispatchQueue.main.async {
+                        self.delegate?.didUpdate(TaskStoreUpdate(changes: []))
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        self.delegate?.didFail(with: error)
+                    }
+                }
+            }
         }
     }
     
@@ -221,7 +237,8 @@ extension TaskDataProvider: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         let update = TaskStoreUpdate(changes: changes)
-        delegate?.didUpdate(update)
+        DispatchQueue.main.async {
+            self.delegate?.didUpdate(update)
+        }
     }
-    
 }

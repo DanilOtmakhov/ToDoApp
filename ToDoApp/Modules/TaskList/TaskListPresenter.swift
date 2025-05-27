@@ -10,7 +10,7 @@ import Foundation
 protocol TaskListPresenterProtocol: AnyObject {
     var numberOfTasks: Int { get }
     func task(at index: Int) -> TaskCellViewModel?
-    func viewDidLoad()
+    func loadTasks()
     func didTapCompleteButton(at index: Int)
     func didTapAddTask()
     func didTapEditTask(at index: Int)
@@ -37,7 +37,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
         return TaskCellViewModel(task)
     }
     
-    func viewDidLoad() {
+    func loadTasks() {
         interactor.loadTasks(with: "")
     }
     

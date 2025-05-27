@@ -29,7 +29,7 @@ final class TaskStore: TaskStoreProtocol {
     
     // MARK: - Initialization
     
-    init(context: NSManagedObjectContext = CoreDataStack.shared.context,
+    init(context: NSManagedObjectContext = CoreDataStack.shared.backgroundContext,
          queue: DispatchQueue = DispatchQueue(label: "com.ToDoApp.TaskStore.queue", qos: .userInitiated)) {
         self.context = context
         self.operationQueue = queue
@@ -98,6 +98,7 @@ extension TaskStore {
                 
                 entity.title = newTask.title
                 entity.descriptionText = newTask.description
+                entity.createdAt = newTask.createdAt
                 entity.isCompleted = newTask.isCompleted
                 
                 if self.context.hasChanges {

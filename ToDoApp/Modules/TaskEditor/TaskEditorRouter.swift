@@ -20,6 +20,8 @@ final class TaskEditorRouter: TaskEditorRouterProtocol {
     }
     
     func dismissEditor() {
-        viewController?.navigationController?.popViewController(animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.viewController?.navigationController?.popViewController(animated: true)
+        }
     }
 }

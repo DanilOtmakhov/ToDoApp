@@ -58,13 +58,13 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
         setupViewController()
         setupNavigationBar()
         setupTapGesture()
-        
-        presenter.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
+        
+        presenter.loadTasks()
     }
 
 }

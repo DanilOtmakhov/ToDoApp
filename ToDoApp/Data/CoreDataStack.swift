@@ -12,9 +12,17 @@ final class CoreDataStack: ObservableObject {
     
     static let shared = CoreDataStack()
     
-    var context: NSManagedObjectContext {
-        persistentContainer.viewContext
-    }
+    lazy var viewContext: NSManagedObjectContext = {
+        let context = persistentContainer.viewContext
+        context.automaticallyMergesChangesFromParent = true
+        return context
+    }()
+    
+    lazy var backgroundContext: NSManagedObjectContext = {
+        let context = persistentContainer.newBackgroundContext()
+        context.automaticallyMergesChangesFromParent = true
+        return context
+    }()
     
     lazy var persistentContainer: NSPersistentContainer = {
         
@@ -28,19 +36,6 @@ final class CoreDataStack: ObservableObject {
         return container
     }()
         
-    private init() { }
-}
-
-extension CoreDataStack {
-    
-    func save() {
-        guard persistentContainer.viewContext.hasChanges else { return }
-        
-        do {
-            try persistentContainer.viewContext.save()
-        } catch {
-            print("Failed to save the context:", error.localizedDescription)
-        }
-    }
+    private init() {}
     
 }
