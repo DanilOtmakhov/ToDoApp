@@ -9,6 +9,7 @@ import UIKit
 
 protocol TaskListViewProtocol: AnyObject {
     func applyUpdate(_ update: TaskStoreUpdate)
+    func showError(_ message: String)
 }
 
 final class TaskListViewController: UIViewController, TaskListViewProtocol {
@@ -95,6 +96,12 @@ extension TaskListViewController {
                 }
             }
         }
+    }
+    
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
 }

@@ -77,7 +77,7 @@ extension TaskListPresenter: TaskListInteractorOutput {
     }
     
     func didFail(_ error: any Error) {
-        // TODO: show error
+        view?.showError(error.localizedDescription)
     }
     
 }

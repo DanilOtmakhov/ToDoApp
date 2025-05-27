@@ -57,7 +57,7 @@ extension TaskEditorPresenter: TaskEditorInteractorOutput {
     }
     
     func didFailToSaveTask(with error: any Error) {
-        // TODO: show error
+        view?.showError(error.localizedDescription)
     }
     
 }

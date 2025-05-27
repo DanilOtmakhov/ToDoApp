@@ -22,6 +22,7 @@ struct TaskEditorViewModel {
 protocol TaskEditorViewProtocol: AnyObject {
     func reloadData(_ viewModel: TaskEditorViewModel)
     func focusTitleField()
+    func showError(_ message: String)
 }
 
 final class TaskEditorViewController: UIViewController, TaskEditorViewProtocol {
@@ -94,6 +95,14 @@ extension TaskEditorViewController {
         titleTextField.becomeFirstResponder()
     }
     
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: "Что-то пошло не так(", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default, handler: { [weak self] _ in
+            self?.updateDoneButtonVisibility()
+        }))
+        present(alert, animated: true)
+    }
+    
 }
 
 // MARK: - Private Methods
@@ -125,7 +134,6 @@ private extension TaskEditorViewController {
     }
     
     func setupNavigationBar() {
-//        navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.largeTitleDisplayMode = .never
         
         doneButton = UIBarButtonItem(title: "Готово",
