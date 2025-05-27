@@ -14,22 +14,16 @@ protocol TaskListRouterProtocol {
 final class TaskListRouter: TaskListRouterProtocol {
 
     private weak var viewController: UIViewController?
+    private let moduleFactory: ModuleFactoryProtocol
 
-    init(viewController: UIViewController) {
+    init(viewController: UIViewController, moduleFactory: ModuleFactoryProtocol) {
         self.viewController = viewController
+        self.moduleFactory = moduleFactory
     }
-
+    
     func showTaskEditor(task: Task?) {
-        let store = TaskStore()
-        let provider = TaskDataProvider(store: store)
-        let interactor = TaskEditorInteractor(provider: provider)
-        let presenter = TaskEditorPresenter(interactor: interactor, task: task)
-        let viewController = TaskEditorViewController(presenter: presenter)
-        let router = TaskEditorRouter(viewController: viewController)
-        
-        presenter.router = router
-
-        self.viewController?.navigationController?.pushViewController(viewController, animated: true)
+        let taskEditorViewController = moduleFactory.makeTaskEditorModule(task: task)
+        viewController?.navigationController?.pushViewController(taskEditorViewController, animated: true)
     }
     
 }
