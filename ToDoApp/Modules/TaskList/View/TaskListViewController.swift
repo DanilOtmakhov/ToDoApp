@@ -17,13 +17,15 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
     
     private lazy var searchController: UISearchController = {
         let controller = UISearchController()
+        controller.searchResultsUpdater = self
+        controller.searchBar.searchBarStyle = .default
+        controller.searchBar.setValue("Отменить", forKey: "cancelButtonText")
         return controller
     }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.dataSource = self
-        tableView.delegate = self
         tableView.separatorStyle = .singleLine
         tableView.allowsSelection = false
         tableView.rowHeight = UITableView.automaticDimension
@@ -55,6 +57,8 @@ final class TaskListViewController: UIViewController, TaskListViewProtocol {
         super.viewDidLoad()
         setupViewController()
         setupNavigationBar()
+        setupTapGesture()
+        
         presenter.viewDidLoad()
     }
     
@@ -71,6 +75,11 @@ extension TaskListViewController {
     
     func applyUpdate(_ update: TaskStoreUpdate) {
         footerView.count = presenter.numberOfTasks
+        
+        if update.changes.isEmpty {
+            tableView.reloadData()
+            return
+        }
         
         tableView.performBatchUpdates {
             for change in update.changes {
@@ -131,6 +140,43 @@ private extension TaskListViewController {
         let backItem = UIBarButtonItem()
         backItem.title = "Назад"
         navigationItem.backBarButtonItem = backItem
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.accentPrimary
+        ]
+        
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self])
+            .setTitleTextAttributes(attributes, for: .normal)
+    }
+    
+    func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapOutsideSearchBar))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+}
+
+// MARK: - Actions
+
+@objc
+private extension TaskListViewController {
+    
+    func handleTapOutsideSearchBar() {
+        if searchController.isActive {
+            searchController.searchBar.resignFirstResponder()
+            searchController.isActive = false
+        }
+    }
+    
+}
+
+// MARK: - UISearchResultsUpdating
+
+extension TaskListViewController: UISearchResultsUpdating {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let query = searchController.searchBar.text else { return }
+        presenter.didChangeSearchQuery(query)
     }
     
 }
@@ -172,11 +218,5 @@ extension TaskListViewController: UITableViewDataSource {
         
         return cell
     }
-    
-}
-
-// MARK: - UITableViewDelegate
-
-extension TaskListViewController: UITableViewDelegate {
     
 }

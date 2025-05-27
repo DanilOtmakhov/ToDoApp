@@ -82,6 +82,18 @@ final class TaskCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.attributedText = nil
+        titleLabel.text = nil
+        descriptionLabel.text = nil
+        dateLabel.text = nil
+        completeButton.setImage(nil, for: .normal)
+        titleLabel.textColor = .textPrimary
+        descriptionLabel.textColor = .textPrimary
+        completeButton.tintColor = .textSecondary
+    }
+    
 }
 
 // MARK: - Internal Methods

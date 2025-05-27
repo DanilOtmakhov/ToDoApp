@@ -22,7 +22,7 @@ protocol TaskListDataProviderProtocol {
     var delegate: TaskListDataProviderDelegate? { get set }
     var numberOfRows: Int { get }
     func task(at indexPath: IndexPath) -> Task?
-    func fetchTasks()
+    func fetchTasks(with query: String)
     func save(_ tasks: [Task], completion: @escaping (Result<Void, Error>) -> Void)
     func toggleCompletion(for task: Task, completion: @escaping (Result<Void, Error>) -> Void)
     func delete(_ task: Task, completion: @escaping (Result<Void, Error>) -> Void)
@@ -88,8 +88,17 @@ extension TaskDataProvider: TaskListDataProviderProtocol {
         return Task(from: entity)
     }
     
-    func fetchTasks() {
+    func fetchTasks(with query: String = "") {
         do {
+            if query.isEmpty {
+                fetchedResultsController.fetchRequest.predicate = nil
+            } else {
+                fetchedResultsController.fetchRequest.predicate = NSPredicate(
+                    format: "title CONTAINS[cd] %@ OR descriptionText CONTAINS[cd] %@",
+                    query, query
+                )
+            }
+            
             try fetchedResultsController.performFetch()
             delegate?.didUpdate(TaskStoreUpdate(changes: []))
         } catch {

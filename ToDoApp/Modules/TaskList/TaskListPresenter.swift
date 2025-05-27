@@ -16,6 +16,7 @@ protocol TaskListPresenterProtocol: AnyObject {
     func didTapEditTask(at index: Int)
     func didTapDeleteTask(at index: Int)
     func didTapShareTask(at index: Int)
+    func didChangeSearchQuery(_ query: String)
 }
 
 final class TaskListPresenter: TaskListPresenterProtocol {
@@ -36,7 +37,7 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     }
     
     func viewDidLoad() {
-        interactor.loadTasks()
+        interactor.loadTasks(with: "")
     }
     
     func didTapCompleteButton(at index: Int) {
@@ -58,6 +59,10 @@ final class TaskListPresenter: TaskListPresenterProtocol {
     
     func didTapShareTask(at index: Int) {
         
+    }
+    
+    func didChangeSearchQuery(_ query: String) {
+        interactor.loadTasks(with: query)
     }
     
 }

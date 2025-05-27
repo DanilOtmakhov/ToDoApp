@@ -10,7 +10,7 @@ import Foundation
 protocol TaskListInteractorProtocol {
     var numberOfTasks: Int { get }
     func task(at index: Int) -> Task?
-    func loadTasks()
+    func loadTasks(with query: String)
     func toggleCompletionForTask(at index: Int)
     func deleteTask(at index: Int)
 }
@@ -62,9 +62,9 @@ extension TaskListInteractor {
         provider.task(at: IndexPath(row: index, section: 0))
     }
 
-    func loadTasks() {
+    func loadTasks(with query: String) {
         if userDefaults.bool(forKey: UserDefaultsKeys.hasLaunchedBefore) {
-            provider.fetchTasks()
+            provider.fetchTasks(with: query)
         } else {
             loadInitialTasks()
         }
