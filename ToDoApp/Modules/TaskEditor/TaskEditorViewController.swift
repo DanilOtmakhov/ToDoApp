@@ -125,7 +125,8 @@ private extension TaskEditorViewController {
     }
     
     func setupNavigationBar() {
-        navigationController?.navigationBar.prefersLargeTitles = false
+//        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
         
         doneButton = UIBarButtonItem(title: "Готово",
                                       style: .done,

@@ -22,8 +22,9 @@ protocol TaskListPresenterProtocol: AnyObject {
 final class TaskListPresenter: TaskListPresenterProtocol {
     
     weak var view: TaskListViewProtocol?
-    private let interactor: TaskListInteractorProtocol
     var router: TaskListRouterProtocol?
+    
+    private let interactor: TaskListInteractorProtocol
     
     init(interactor: TaskListInteractorProtocol) {
         self.interactor = interactor

@@ -16,6 +16,7 @@ protocol TaskEditorPresenterProtocol: AnyObject {
 final class TaskEditorPresenter: TaskEditorPresenterProtocol {
     
     weak var view: TaskEditorViewProtocol?
+    var router: TaskEditorRouterProtocol?
     
     private var interactor: TaskEditorInteractorInput
     private var task: Task?
@@ -41,6 +42,8 @@ final class TaskEditorPresenter: TaskEditorPresenterProtocol {
         } else {
             interactor.addTask(title: title, description: description)
         }
+        
+        router?.dismissEditor()
     }
     
 }

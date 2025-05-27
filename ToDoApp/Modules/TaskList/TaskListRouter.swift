@@ -13,7 +13,7 @@ protocol TaskListRouterProtocol {
 
 final class TaskListRouter: TaskListRouterProtocol {
 
-    weak var viewController: UIViewController?
+    private weak var viewController: UIViewController?
 
     init(viewController: UIViewController) {
         self.viewController = viewController
@@ -25,6 +25,9 @@ final class TaskListRouter: TaskListRouterProtocol {
         let interactor = TaskEditorInteractor(provider: provider)
         let presenter = TaskEditorPresenter(interactor: interactor, task: task)
         let viewController = TaskEditorViewController(presenter: presenter)
+        let router = TaskEditorRouter(viewController: viewController)
+        
+        presenter.router = router
 
         self.viewController?.navigationController?.pushViewController(viewController, animated: true)
     }

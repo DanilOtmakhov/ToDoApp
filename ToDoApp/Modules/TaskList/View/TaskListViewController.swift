@@ -131,6 +131,7 @@ private extension TaskListViewController {
     func setupNavigationBar() {
         title = "Задачи"
         
+        navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
