@@ -184,7 +184,7 @@ extension TaskCell: UIContextMenuInteractionDelegate {
         return UIContextMenuConfiguration(
             actionProvider: { [weak self] _ in
                 
-                let editIcon = UIImage(systemName: "pencil")
+                let editIcon = UIImage(systemName: "square.and.pencil")
                 let editAction = UIAction(
                     title: "Редактировать",
                     image: editIcon

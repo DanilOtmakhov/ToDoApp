@@ -14,7 +14,6 @@ protocol TaskEditorInteractorInput {
 }
 
 protocol TaskEditorInteractorOutput: AnyObject {
-    func didSaveTaskSuccessfully()
     func didFailToSaveTask(with error: Error)
 }
 
@@ -93,7 +92,7 @@ private extension TaskEditorInteractor {
     private func handleResult(_ result: Result<Void, Error>) {
         switch result {
         case .success:
-            self.output?.didSaveTaskSuccessfully()
+            break
         case .failure(let error):
             self.output?.didFailToSaveTask(with: error)
         }

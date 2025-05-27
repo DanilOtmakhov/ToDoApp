@@ -52,14 +52,8 @@ final class TaskEditorPresenter: TaskEditorPresenterProtocol {
 
 extension TaskEditorPresenter: TaskEditorInteractorOutput {
     
-    func didSaveTaskSuccessfully() {
-        
-    }
-    
     func didFailToSaveTask(with error: any Error) {
         view?.showError(error.localizedDescription)
     }
     
 }
-
-
